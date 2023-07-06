@@ -13,9 +13,19 @@
     "keywords": [],
     "license": "ISC",
     "devDependencies": {
-        "nodemon": "^2.0.16"
+        "@types/node": "^20.4.0",
+        "@typescript-eslint/eslint-plugin": "^5.59.11",
+        "@typescript-eslint/parser": "^5.59.11",
+        "nodemon": "^2.0.16",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.1.6",
+        "eslint": "^8.42.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "prettier": "^2.8.8"
     },
     "dependencies": {
-        "ws": "^8.8.0"
+        "dotenv": "^16.3.1",
+        "ws": "^8.13.0"
     }
 }
