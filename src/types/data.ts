@@ -9,3 +9,13 @@ export type RegDataResult = {
   error: boolean;
   errorText: string;
 };
+
+export type UpdateRoomResult = {
+  roomId: number;
+  roomUsers: RoomUser[];
+};
+
+export type RoomUser = {
+  name: string;
+  index: number;
+};

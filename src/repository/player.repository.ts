@@ -5,7 +5,7 @@ export class PlayerRepository {
   private readonly players: Player[] = [];
 
   create({ name, password }: Pick<Player, 'name' | 'password'>): Player {
-    const newPlayer = {
+    const newPlayer: Player = {
       id: PlayerRepository.lastId++,
       name,
       password,

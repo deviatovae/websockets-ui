@@ -1,5 +1,5 @@
 import { PlayerRepository } from '../repository/player.repository';
-import { RegData, RegDataResult } from '../types/data';
+import { RegData, RegDataResult } from '../types';
 
 export class PlayerController {
   constructor(private readonly playerRepository: PlayerRepository) {}
