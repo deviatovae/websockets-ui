@@ -1,36 +1,25 @@
-import { PlayerRepository } from '../repository/player.repository';
 import { RegData, RegDataResult } from '../types';
+import { UserService } from '../service/user.service';
 
 export class PlayerController {
-  constructor(private readonly playerRepository: PlayerRepository) {}
+  constructor(private readonly userService: UserService) {}
 
   login({ name, password }: RegData): RegDataResult {
-    const player = this.playerRepository.getPlayer(name);
-
-    if (!player) {
-      const { id } = this.playerRepository.create({ name, password });
+    try {
+      const { id, name: playerName } = this.userService.login(name, password);
       return {
-        name,
+        name: playerName,
         index: id,
         error: false,
         errorText: '',
       };
-    }
-
-    if (password === player.password) {
+    } catch (e) {
       return {
-        name,
-        index: player.id,
-        error: false,
-        errorText: '',
+        name: '',
+        index: 0,
+        error: true,
+        errorText: e.message,
       };
     }
-
-    return {
-      name: '',
-      index: 0,
-      error: true,
-      errorText: "Invalid player's credentials",
-    };
   }
 }

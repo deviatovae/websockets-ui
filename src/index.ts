@@ -6,6 +6,7 @@ import { Message, MessageType, RegData } from './types';
 import { RoomController } from './controller/room.controller';
 import { RoomRepository } from './repository/room.repository';
 import { createResultMessage } from './types/message';
+import { UserService } from './service/user.service';
 
 const HTTP_PORT = 8181;
 
@@ -14,9 +15,14 @@ front.listen(HTTP_PORT);
 
 export const wss = new WebSocketServer({ port: 3000 });
 const playerRepository = new PlayerRepository();
-const playerController = new PlayerController(playerRepository);
+const userService = new UserService(playerRepository);
+const playerController = new PlayerController(userService);
 const roomRepository = new RoomRepository();
-const roomController = new RoomController(wss.clients, roomRepository);
+const roomController = new RoomController(
+  wss.clients,
+  roomRepository,
+  userService,
+);
 
 wss.on('connection', (ws) => {
   ws.on('error', console.error);

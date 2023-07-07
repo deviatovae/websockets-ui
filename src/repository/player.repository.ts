@@ -1,7 +1,7 @@
 import { Player } from '../entity/player';
 
 export class PlayerRepository {
-  private static lastId: 1;
+  private static lastId = 1;
   private readonly players: Player[] = [];
 
   create({ name, password }: Pick<Player, 'name' | 'password'>): Player {

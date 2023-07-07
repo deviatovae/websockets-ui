@@ -1,11 +1,12 @@
 import { Room } from '../entity/room';
+import { Player } from '../entity/player';
 
 export class RoomRepository {
   private static lastId = 1;
   private readonly rooms: Room[] = [];
 
-  create(): Room {
-    const newRoom: Room = { id: RoomRepository.lastId++, users: [] };
+  create(player: Player): Room {
+    const newRoom: Room = { id: RoomRepository.lastId++, users: [player] };
 
     this.rooms.push(newRoom);
 
