@@ -8,8 +8,8 @@ import { RoomRepository } from './repository/room.repository';
 import { createResultMessage } from './types/message';
 import { WsUserService } from './service/ws-user.service';
 import { AddToRoom } from './types/data';
-import { GameService } from './service/game.service';
 import { GameRepository } from './repository/game.repository';
+import { EventEmitterFactory } from './events/event-emitter-factory';
 
 const HTTP_PORT = 8181;
 
@@ -17,18 +17,20 @@ console.log(`Start static http server on the ${HTTP_PORT} port!`);
 front.listen(HTTP_PORT);
 
 export const wss = new WebSocketServer({ port: 3000 });
+
 const playerRepository = new PlayerRepository();
-const userService = new WsUserService(playerRepository);
-const playerController = new PlayerController(userService);
-const gameRepository = new GameRepository();
-const gameService = new GameService(userService, gameRepository);
 const roomRepository = new RoomRepository();
-const roomController = new RoomController(
-  wss.clients,
-  roomRepository,
+const gameRepository = new GameRepository();
+const userService = new WsUserService(playerRepository);
+
+const emitter = EventEmitterFactory.createEventEmitter(
   userService,
-  gameService,
+  roomRepository,
+  gameRepository,
 );
+
+const playerController = new PlayerController(emitter, userService);
+const roomController = new RoomController(emitter, roomRepository, userService);
 
 wss.on('connection', (ws) => {
   ws.on('error', console.error);

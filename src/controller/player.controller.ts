@@ -1,9 +1,14 @@
 import { RegData, RegDataResult } from '../types';
 import { WsUserService } from '../service/ws-user.service';
 import { WebSocket } from 'ws';
+import { EventEmitter } from '../events/event-emitter';
+import { Events } from '../events/events';
 
 export class PlayerController {
-  constructor(private readonly userService: WsUserService) {}
+  constructor(
+    private readonly emitter: EventEmitter,
+    private readonly userService: WsUserService,
+  ) {}
 
   login(ws: WebSocket, { name, password }: RegData): RegDataResult {
     try {
@@ -12,6 +17,7 @@ export class PlayerController {
         name,
         password,
       );
+      this.emitter.emit(Events.Login, ws);
       return {
         name: playerName,
         index: id,

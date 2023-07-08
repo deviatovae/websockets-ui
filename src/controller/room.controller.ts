@@ -1,23 +1,21 @@
 import { RoomRepository } from '../repository/room.repository';
 import { WebSocket } from 'ws';
-import { createResultMessage } from '../types/message';
-import { MessageType } from '../types';
-import { AddToRoom, UpdateRoomResult } from '../types/data';
+import { AddToRoom } from '../types/data';
 import { WsUserService } from '../service/ws-user.service';
-import { GameService } from '../service/game.service';
+import { EventEmitter } from '../events/event-emitter';
+import { Events } from '../events/events';
 
 export class RoomController {
   constructor(
-    private readonly clients: Set<WebSocket>,
+    private readonly emitter: EventEmitter,
     private readonly roomRepository: RoomRepository,
     private readonly userService: WsUserService,
-    private readonly gameService: GameService,
   ) {}
 
   createRoom(ws: WebSocket): void {
     const player = this.userService.getCurrentUser(ws);
     this.roomRepository.create(player);
-    this.sendRoomList();
+    this.emitter.emit(Events.RoomCreated);
   }
 
   addUserToRoom(ws: WebSocket, { indexRoom }: AddToRoom): void {
@@ -38,22 +36,6 @@ export class RoomController {
 
     room.users.push(player);
     this.roomRepository.updateRoom(room);
-    this.sendRoomList();
-    this.gameService.createGame(room);
-  }
-
-  private sendRoomList() {
-    const rooms = this.roomRepository.getAvailableRooms();
-    const result = JSON.stringify(
-      createResultMessage<UpdateRoomResult[]>({
-        id: 0,
-        type: MessageType.UpdateRoom,
-        data: rooms.map(({ id: roomId, users }) => ({
-          roomId,
-          roomUsers: users.map(({ name, id: index }) => ({ name, index })),
-        })),
-      }),
-    );
-    this.clients.forEach((client) => client.send(result));
+    this.emitter.emit(Events.RoomOccupied, room);
   }
 }

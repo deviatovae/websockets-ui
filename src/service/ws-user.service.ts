@@ -42,4 +42,8 @@ export class WsUserService {
 
     return entry[0];
   }
+
+  getPlayerSockets(): WebSocket[] {
+    return Array.from(this.users.keys());
+  }
 }
