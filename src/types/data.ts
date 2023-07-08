@@ -1,3 +1,5 @@
+import { Ship } from '../entity/ship';
+
 export type RegData = {
   name: string;
   password: string;
@@ -27,4 +29,9 @@ export type AddToRoom = {
 export type CreateGameResult = {
   idGame: number;
   idPlayer: number;
+};
+
+export type AddShips = {
+  gameId: number;
+  ships: Ship[];
 };

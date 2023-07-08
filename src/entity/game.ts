@@ -2,5 +2,5 @@ import { Ship } from './ship';
 
 export type Game = {
   id: number;
-  ships: Ship[];
+  ships: { [key: number]: Ship[] };
 };

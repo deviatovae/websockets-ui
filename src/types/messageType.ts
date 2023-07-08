@@ -4,4 +4,5 @@ export enum MessageType {
   UpdateRoom = 'update_room',
   AddToRoom = 'add_user_to_room',
   CreateGame = 'create_game',
+  AddShips = 'add_ships',
 }

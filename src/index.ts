@@ -7,9 +7,10 @@ import { RoomController } from './controller/room.controller';
 import { RoomRepository } from './repository/room.repository';
 import { createResultMessage } from './types/message';
 import { WsUserService } from './service/ws-user.service';
-import { AddToRoom } from './types/data';
+import { AddShips, AddToRoom } from './types/data';
 import { GameRepository } from './repository/game.repository';
 import { EventEmitterFactory } from './events/event-emitter-factory';
+import { GameController } from './controller/game.controller';
 
 const HTTP_PORT = 8181;
 
@@ -31,6 +32,7 @@ const emitter = EventEmitterFactory.createEventEmitter(
 
 const playerController = new PlayerController(emitter, userService);
 const roomController = new RoomController(emitter, roomRepository, userService);
+const gameController = new GameController(emitter, userService, gameRepository);
 
 wss.on('connection', (ws) => {
   ws.on('error', console.error);
@@ -55,6 +57,10 @@ wss.on('connection', (ws) => {
 
         case MessageType.AddToRoom:
           roomController.addUserToRoom(ws, messageData as AddToRoom);
+          break;
+
+        case MessageType.AddShips:
+          gameController.addShips(ws, messageData as AddShips);
           break;
       }
 

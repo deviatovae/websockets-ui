@@ -1,5 +1,6 @@
 import { Room } from '../entity/room';
 import { Player } from '../entity/player';
+import { Game } from '../entity/game';
 
 export class RoomRepository {
   private static lastId = 1;
@@ -20,7 +21,7 @@ export class RoomRepository {
   getRoom(id: number): Room | null {
     const room = this.rooms.find(({ id: roomId }) => id === roomId);
 
-    return room ? { ...room } : null;
+    return room ? this.clone(room) : null;
   }
 
   updateRoom(room: Room): boolean {
@@ -28,7 +29,11 @@ export class RoomRepository {
     if (roomIdx < 0) {
       return false;
     }
-    this.rooms[roomIdx] = { ...room };
+    this.rooms[roomIdx] = this.clone(room);
     return true;
+  }
+
+  private clone(room: Room): Room {
+    return JSON.parse(JSON.stringify(room));
   }
 }
