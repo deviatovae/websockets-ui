@@ -8,6 +8,8 @@ import { RoomRepository } from './repository/room.repository';
 import { createResultMessage } from './types/message';
 import { WsUserService } from './service/ws-user.service';
 import { AddToRoom } from './types/data';
+import { GameService } from './service/game.service';
+import { GameRepository } from './repository/game.repository';
 
 const HTTP_PORT = 8181;
 
@@ -18,11 +20,14 @@ export const wss = new WebSocketServer({ port: 3000 });
 const playerRepository = new PlayerRepository();
 const userService = new WsUserService(playerRepository);
 const playerController = new PlayerController(userService);
+const gameRepository = new GameRepository();
+const gameService = new GameService(userService, gameRepository);
 const roomRepository = new RoomRepository();
 const roomController = new RoomController(
   wss.clients,
   roomRepository,
   userService,
+  gameService,
 );
 
 wss.on('connection', (ws) => {

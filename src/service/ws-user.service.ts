@@ -11,8 +11,9 @@ export class WsUserService {
     const player = this.playerRepository.getPlayer(name);
 
     if (!player) {
-      this.users.set(ws, this.playerRepository.create({ name, password }));
-      return player;
+      const newPlayer = this.playerRepository.create({ name, password });
+      this.users.set(ws, newPlayer);
+      return newPlayer;
     }
 
     if (password === player.password) {
@@ -28,5 +29,17 @@ export class WsUserService {
       throw new Error('User is not authorized');
     }
     return this.users.get(ws);
+  }
+
+  getPlayerSocket(player: Player): WebSocket {
+    const entry = Array.from(this.users.entries()).find(
+      ([, { id: playerId }]) => playerId === player.id,
+    );
+
+    if (!entry) {
+      throw new Error('Connection for player is not found');
+    }
+
+    return entry[0];
   }
 }

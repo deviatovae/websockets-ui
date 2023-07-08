@@ -23,3 +23,8 @@ export type RoomUser = {
 export type AddToRoom = {
   indexRoom: number;
 };
+
+export type CreateGameResult = {
+  idGame: number;
+  idPlayer: number;
+};
