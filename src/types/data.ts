@@ -19,3 +19,7 @@ export type RoomUser = {
   name: string;
   index: number;
 };
+
+export type AddToRoom = {
+  indexRoom: number;
+};

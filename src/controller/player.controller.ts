@@ -1,12 +1,17 @@
 import { RegData, RegDataResult } from '../types';
-import { UserService } from '../service/user.service';
+import { WsUserService } from '../service/ws-user.service';
+import { WebSocket } from 'ws';
 
 export class PlayerController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: WsUserService) {}
 
-  login({ name, password }: RegData): RegDataResult {
+  login(ws: WebSocket, { name, password }: RegData): RegDataResult {
     try {
-      const { id, name: playerName } = this.userService.login(name, password);
+      const { id, name: playerName } = this.userService.login(
+        ws,
+        name,
+        password,
+      );
       return {
         name: playerName,
         index: id,

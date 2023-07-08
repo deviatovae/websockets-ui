@@ -17,9 +17,18 @@ export class RoomRepository {
     return this.rooms.filter(({ users }) => users.length < 2);
   }
 
-  getRoom(index: number): Room | null {
-    const room = this.rooms.find(({ id: roomId }) => index === roomId);
+  getRoom(id: number): Room | null {
+    const room = this.rooms.find(({ id: roomId }) => id === roomId);
 
     return room ? { ...room } : null;
+  }
+
+  updateRoom(room: Room): boolean {
+    const roomIdx = this.rooms.findIndex(({ id }) => id === room.id);
+    if (roomIdx < 0) {
+      return false;
+    }
+    this.rooms[roomIdx] = { ...room };
+    return true;
   }
 }

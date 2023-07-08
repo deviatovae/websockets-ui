@@ -2,23 +2,40 @@ import { RoomRepository } from '../repository/room.repository';
 import { WebSocket } from 'ws';
 import { createResultMessage } from '../types/message';
 import { MessageType } from '../types';
-import { UpdateRoomResult } from '../types/data';
-import { UserService } from '../service/user.service';
+import { AddToRoom, UpdateRoomResult } from '../types/data';
+import { WsUserService } from '../service/ws-user.service';
 
 export class RoomController {
   constructor(
     private readonly clients: Set<WebSocket>,
     private readonly roomRepository: RoomRepository,
-    private readonly userService: UserService,
+    private readonly userService: WsUserService,
   ) {}
 
-  createRoom(): void {
-    const player = this.userService.getCurrentUser();
-    if (!player) {
-      throw new Error('User is not authorized');
-    }
-    console.log(player);
+  createRoom(ws: WebSocket): void {
+    const player = this.userService.getCurrentUser(ws);
     this.roomRepository.create(player);
+    this.sendRoomList();
+  }
+
+  addUserToRoom(ws: WebSocket, { indexRoom }: AddToRoom): void {
+    const player = this.userService.getCurrentUser(ws);
+    const room = this.roomRepository.getRoom(indexRoom);
+    if (!room) {
+      throw new Error('Invalid room id');
+    }
+
+    const existedUser = room.users[0];
+    if (player.id === existedUser?.id) {
+      throw new Error('User is already in the room');
+    }
+
+    room.users.push(player);
+    this.roomRepository.updateRoom(room);
+    this.sendRoomList();
+  }
+
+  private sendRoomList() {
     const rooms = this.roomRepository.getAvailableRooms();
     const result = JSON.stringify(
       createResultMessage<UpdateRoomResult[]>({
