@@ -3,4 +3,5 @@ export enum Events {
   RoomCreated = 'roomCreated',
   RoomOccupied = 'roomOccupied',
   ShipPlaced = 'shipPlaced',
+  GameStarted = 'gameStarted',
 }

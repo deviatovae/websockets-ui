@@ -40,3 +40,7 @@ export type StartGameResult = {
   ships: Ship[];
   currentPlayerIndex: number;
 };
+
+export type TurnResult = {
+  currentPlayer: number;
+};

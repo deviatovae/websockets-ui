@@ -5,19 +5,16 @@ export class GameRepository {
   private lastId = 1;
 
   create(): Game {
-    const newGame: Game = {
-      id: this.lastId++,
-      ships: {},
-    };
+    const newGame: Game = new Game(this.lastId++);
 
-    this.games.push({ ...newGame });
+    this.games.push(newGame.clone());
 
     return newGame;
   }
 
   find(gameId: number): Game | null {
     const game = this.games.find(({ id }) => id === gameId);
-    return game ? this.clone(game) : null;
+    return game ? game.clone() : null;
   }
 
   update(game: Game): boolean {
@@ -25,11 +22,7 @@ export class GameRepository {
     if (gameIdx < 0) {
       return false;
     }
-    this.games[gameIdx] = this.clone(game);
+    this.games[gameIdx] = game.clone();
     return true;
-  }
-
-  private clone(game: Game): Game {
-    return JSON.parse(JSON.stringify(game));
   }
 }

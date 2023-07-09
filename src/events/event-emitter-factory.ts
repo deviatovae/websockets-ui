@@ -6,6 +6,7 @@ import { CreateRoomListener } from './listeners/create-room.listener';
 import { GameRepository } from '../repository/game.repository';
 import { WsUserService } from '../service/ws-user.service';
 import { StartGameListener } from './listeners/start-game.listener';
+import { SendTurnListener } from './listeners/send-turn.listener';
 
 export class EventEmitterFactory {
   static createEventEmitter(
@@ -41,10 +42,16 @@ export class EventEmitterFactory {
       createRoomListener.createGame.bind(createRoomListener),
     );
 
-    const startGameListener = new StartGameListener(userService);
+    const startGameListener = new StartGameListener(userService, emitter);
     emitter.on(
       Events.ShipPlaced,
       startGameListener.startGame.bind(startGameListener),
+    );
+
+    const sendTurnListener = new SendTurnListener(userService);
+    emitter.on(
+      Events.GameStarted,
+      sendTurnListener.sendTurn.bind(sendTurnListener),
     );
 
     return emitter;
