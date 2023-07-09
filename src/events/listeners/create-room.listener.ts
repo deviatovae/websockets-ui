@@ -10,17 +10,18 @@ export class CreateRoomListener {
     private readonly userService: WsUserService,
     private readonly gameRepository: GameRepository,
   ) {}
+
   createGame(room: Room) {
     const { id: gameId } = this.gameRepository.create();
 
-    room.users.forEach((player) => {
-      const ws = this.userService.getPlayerSocket(player);
+    room.users.forEach(({ id }) => {
+      const ws = this.userService.getPlayerSocket(id);
       const result = createResultMessage<CreateGameResult>({
         id: 0,
         type: MessageType.CreateGame,
         data: {
           idGame: gameId,
-          idPlayer: player.id,
+          idPlayer: id,
         },
       });
 

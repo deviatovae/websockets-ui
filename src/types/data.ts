@@ -35,3 +35,8 @@ export type AddShips = {
   gameId: number;
   ships: Ship[];
 };
+
+export type StartGameResult = {
+  ships: Ship[];
+  currentPlayerIndex: number;
+};

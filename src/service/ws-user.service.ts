@@ -31,9 +31,9 @@ export class WsUserService {
     return this.users.get(ws);
   }
 
-  getPlayerSocket(player: Player): WebSocket {
+  getPlayerSocket(playerId: number): WebSocket {
     const entry = Array.from(this.users.entries()).find(
-      ([, { id: playerId }]) => playerId === player.id,
+      ([, { id }]) => playerId === id,
     );
 
     if (!entry) {

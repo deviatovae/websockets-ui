@@ -18,7 +18,10 @@ export class GameController {
     if (!game) {
       throw new Error('Game is not found');
     }
+
     game.ships[id] = ships;
+    this.gameRepository.update(game);
+
     this.emitter.emit(Events.ShipPlaced, game);
   }
 }

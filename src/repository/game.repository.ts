@@ -7,7 +7,7 @@ export class GameRepository {
   create(): Game {
     const newGame: Game = {
       id: this.lastId++,
-      ships: [],
+      ships: {},
     };
 
     this.games.push({ ...newGame });
