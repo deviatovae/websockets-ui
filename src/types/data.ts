@@ -44,3 +44,25 @@ export type StartGameResult = {
 export type TurnResult = {
   currentPlayer: number;
 };
+
+export type Attack = {
+  gameId: number;
+  x: number;
+  y: number;
+  indexPlayer: number;
+};
+
+export type AttackResult = {
+  position: {
+    x: number;
+    y: number;
+  };
+  currentPlayer: number;
+  status: AttackStatus;
+};
+
+export enum AttackStatus {
+  Miss = 'miss',
+  Killed = 'killed',
+  Shot = 'shot',
+}

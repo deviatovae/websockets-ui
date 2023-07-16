@@ -11,8 +11,8 @@ export type ShipPosition = {
 };
 
 export enum ShipType {
-  small = 'small',
-  medium = 'medium',
-  large = 'large',
-  huge = 'huge',
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large',
+  Huge = 'huge',
 }

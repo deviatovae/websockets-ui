@@ -7,6 +7,7 @@ import { GameRepository } from '../repository/game.repository';
 import { WsUserService } from '../service/ws-user.service';
 import { StartGameListener } from './listeners/start-game.listener';
 import { SendTurnListener } from './listeners/send-turn.listener';
+import { AttackListener } from './listeners/attack.listener';
 
 export class EventEmitterFactory {
   static createEventEmitter(
@@ -51,6 +52,16 @@ export class EventEmitterFactory {
     const sendTurnListener = new SendTurnListener(userService);
     emitter.on(
       Events.GameStarted,
+      sendTurnListener.sendTurn.bind(sendTurnListener),
+    );
+
+    const attackListener = new AttackListener(userService);
+    emitter.on(
+      Events.Attacked,
+      attackListener.sendAttackResult.bind(attackListener),
+    );
+    emitter.on(
+      Events.Attacked,
       sendTurnListener.sendTurn.bind(sendTurnListener),
     );
 
