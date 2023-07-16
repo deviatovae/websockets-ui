@@ -12,6 +12,17 @@ export class Game {
     this.id = id;
   }
 
+  randomAttack() {
+    const targetPlayerId = this.getNextPlayerId();
+    const indexes = this.battlefields[targetPlayerId]
+      .map((_, idx) => idx)
+      .filter((idx) => this.battlefields[targetPlayerId][idx] === null);
+    const randomIndex = Math.floor(Math.random() * indexes.length);
+    const [x, y] = this.convertIndexToCoordinates(randomIndex);
+
+    return this.attack(x, y);
+  }
+
   attack(x: number, y: number): AttackResult {
     const targetPlayerId = this.getNextPlayerId();
     const currentPlayerId = this.getPlayerIdTurn();

@@ -7,7 +7,7 @@ import { RoomController } from './controller/room.controller';
 import { RoomRepository } from './repository/room.repository';
 import { createResultMessage } from './types/message';
 import { WsUserService } from './service/ws-user.service';
-import { AddShips, AddToRoom, Attack } from './types/data';
+import { AddShips, AddToRoom, Attack, RandomAttack } from './types/data';
 import { GameRepository } from './repository/game.repository';
 import { EventEmitterFactory } from './events/event-emitter-factory';
 import { GameController } from './controller/game.controller';
@@ -65,6 +65,9 @@ wss.on('connection', (ws) => {
 
         case MessageType.Attack:
           gameController.attack(ws, messageData as Attack);
+          break;
+        case MessageType.RandomAttack:
+          gameController.randomAttack(ws, messageData as RandomAttack);
           break;
       }
 

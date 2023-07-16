@@ -66,3 +66,5 @@ export enum AttackStatus {
   Killed = 'killed',
   Shot = 'shot',
 }
+
+export type RandomAttack = Pick<Attack, 'gameId' | 'indexPlayer'>;
