@@ -38,59 +38,10 @@ export class Game {
 
     const isKilled = !ship.length;
     if (isKilled) {
-      // this.markCellsAroundShip(targetPlayerId, ship);
       return this.createAttackRes(x, y, currentPlayerId, AttackStatus.Killed);
     }
 
     return this.createAttackRes(x, y, currentPlayerId, AttackStatus.Shot);
-  }
-
-  private markCellsAroundShip(playerId: number, ship: Ship) {
-    if (ship.length) {
-      return;
-    }
-
-    this.getShipCells(ship).forEach((cell) => {
-      const [row, col] = this.convertIndexToCoordinates(cell);
-
-      for (let i = row - 1; i <= row + 1; i++) {
-        for (let j = col - 1; j <= col + 1; j++) {
-          const index = this.convertCoordinatesToIndex(i, j);
-
-          if (index < 0 || index >= 99 || row === i || col === j) {
-            continue;
-          }
-
-          this.battlefields[playerId][index] = false;
-        }
-      }
-    });
-  }
-
-  private getShipCells(ship: Ship): number[] {
-    const shipCells = [];
-    const isVertical = !ship.direction;
-    const sizes = {
-      [ShipType.Small]: 1,
-      [ShipType.Medium]: 2,
-      [ShipType.Large]: 3,
-      [ShipType.Huge]: 4,
-    };
-    const shipSize = sizes[ship.type];
-    const { x, y } = ship.position;
-
-    if (isVertical) {
-      for (let i = 0; i < shipSize; i++) {
-        const cell = this.convertCoordinatesToIndex(x + i, y);
-        shipCells.push(cell);
-      }
-    } else {
-      for (let i = 0; i < shipSize; i++) {
-        const cell = this.convertCoordinatesToIndex(x, y + i);
-        shipCells.push(cell);
-      }
-    }
-    return shipCells;
   }
 
   addPlayer(playerId: number, ships: Ship[]) {
