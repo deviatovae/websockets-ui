@@ -24,8 +24,8 @@ export class Game {
   }
 
   attack(x: number, y: number): AttackResult {
-    const targetPlayerId = this.getNextPlayerId();
     const currentPlayerId = this.getPlayerIdTurn();
+    const targetPlayerId = this.getNextPlayerId();
 
     const targetCell = this.convertCoordinatesToIndex(x, y);
     if (this.battlefields[targetPlayerId][targetCell] !== null) {
@@ -49,13 +49,96 @@ export class Game {
 
     const isKilled = !ship.length;
     if (isKilled) {
+      this.markCellsAroundShip(targetPlayerId, ship);
       return this.createAttackRes(x, y, currentPlayerId, AttackStatus.Killed);
     }
 
     return this.createAttackRes(x, y, currentPlayerId, AttackStatus.Shot);
   }
 
+  private markCellsAroundShip(playerId: number, ship: Ship) {
+    if (ship.length) {
+      return;
+    }
+
+    this.getCellsAroundShip(ship).forEach(([x, y]) => {
+      const index = this.convertCoordinatesToIndex(x, y);
+      this.battlefields[playerId][index] = false;
+    });
+  }
+
+  getCellsAroundShip(ship: Ship) {
+    const result: [number, number][] = [];
+
+    this.getShipCells(ship).forEach((cell) => {
+      const [row, col] = this.convertIndexToCoordinates(cell);
+
+      for (let i = row - 1; i <= row + 1; i++) {
+        for (let j = col - 1; j <= col + 1; j++) {
+          if (
+            i < 0 ||
+            j < 0 ||
+            i >= this.battleshipSize ||
+            j >= this.battleshipSize ||
+            (row === i && col === j)
+          ) {
+            continue;
+          }
+          result.push([i, j]);
+        }
+      }
+    });
+    return result;
+  }
+
+  getCellsAroundShipByPosition(
+    playerId: number,
+    x: number,
+    y: number,
+  ): [number, number][] {
+    const ships = this.ships[playerId] || [];
+    if (!ships.length) {
+      return [];
+    }
+    const index = this.convertCoordinatesToIndex(x, y);
+    const ship = ships.find((ship) => this.getShipCells(ship).includes(index));
+    if (!ship) {
+      return [];
+    }
+    return this.getCellsAroundShip(ship);
+  }
+
+  getShipCells(ship: Ship): number[] {
+    const shipCells = [];
+    const isVertical = !ship.direction;
+    const sizes = {
+      [ShipType.Small]: 1,
+      [ShipType.Medium]: 2,
+      [ShipType.Large]: 3,
+      [ShipType.Huge]: 4,
+    };
+    const shipSize = sizes[ship.type];
+    const { x, y } = ship.position;
+
+    if (isVertical) {
+      for (let i = 0; i < shipSize; i++) {
+        const cell = this.convertCoordinatesToIndex(x + i, y);
+        shipCells.push(cell);
+      }
+    } else {
+      for (let i = 0; i < shipSize; i++) {
+        const cell = this.convertCoordinatesToIndex(x, y + i);
+        shipCells.push(cell);
+      }
+    }
+    return shipCells;
+  }
+
   addPlayer(playerId: number, ships: Ship[]) {
+    // fix front position bug
+    ships.forEach((ship) => {
+      ship.position.x;
+    });
     this.ships[playerId] = ships;
     this.battlefields[playerId] = new Array(99).fill(null, 0, 99);
   }
@@ -87,15 +170,15 @@ export class Game {
   }
 
   private getNextPlayerId(): number {
-    const playerIds = this.getPlayerIds();
+    return this.getOpponentId(this.playerIdTurn);
+  }
 
+  getOpponentId(currentPlayerId: number): number {
+    const playerIds = this.getPlayerIds();
     if (playerIds.length !== 2) {
       throw new Error('Not enough players');
     }
-
-    return this.getPlayerIds().find(
-      (playerId) => this.playerIdTurn !== playerId,
-    );
+    return playerIds.find((playerId) => currentPlayerId !== playerId);
   }
 
   private validatePlayer(playerId: number): void {
@@ -111,7 +194,7 @@ export class Game {
   private convertIndexToCoordinates(index: number) {
     const row = Math.floor(index / this.battleshipSize);
     const col = index % this.battleshipSize;
-    return [row, col];
+    return [col, row];
   }
 
   private createAttackRes(
