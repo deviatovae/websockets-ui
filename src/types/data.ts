@@ -1,4 +1,5 @@
 import { Ship } from '../entity/ship';
+import { Player } from '../entity/player';
 
 export type RegData = {
   name: string;
@@ -72,3 +73,5 @@ export type RandomAttack = Pick<Attack, 'gameId' | 'indexPlayer'>;
 export type Finish = {
   winPlayer: number;
 };
+
+export type UpdateWinners = Pick<Player, 'name' | 'wins'>[];

@@ -47,19 +47,27 @@ export class WsUserService {
     return entry[0];
   }
 
-  sendMessageForPlayer<T>(game: Game, type: MessageType, data: T) {
+  sendMessageForPlayerInGame<T>(game: Game, type: MessageType, data: T) {
     game.getPlayerIds().forEach((playerId) => {
-      const ws = this.getPlayerSocket(playerId);
-      const result = createResultMessage<T>({
-        id: 0,
-        type,
-        data,
-      });
-      ws.send(JSON.stringify(result));
+      this.sendMessageForPlayer<T>(playerId, type, data);
     });
+  }
+
+  sendMessageForPlayer<T>(playerId: number, type: MessageType, data: T) {
+    const ws = this.getPlayerSocket(playerId);
+    const result = createResultMessage<T>({
+      id: 0,
+      type,
+      data,
+    });
+    ws.send(JSON.stringify(result));
   }
 
   getPlayerSockets(): WebSocket[] {
     return Array.from(this.users.keys());
+  }
+
+  getPlayers() {
+    return Array.from(this.users.values());
   }
 }

@@ -10,4 +10,5 @@ export enum MessageType {
   Attack = 'attack',
   RandomAttack = 'randomAttack',
   Finish = 'finish',
+  UpdateWinners = 'update_winners',
 }

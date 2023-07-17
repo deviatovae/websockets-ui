@@ -29,6 +29,7 @@ const emitter = EventEmitterFactory.createEventEmitter(
   userService,
   roomRepository,
   gameRepository,
+  playerRepository,
 );
 
 const playerController = new PlayerController(emitter, userService);

@@ -1,4 +1,5 @@
 import { Player } from '../entity/player';
+import { Game } from '../entity/game';
 
 export class PlayerRepository {
   private static lastId = 1;
@@ -23,5 +24,9 @@ export class PlayerRepository {
     );
 
     return player ? { ...player } : null;
+  }
+
+  find(playerId: number): Player | null {
+    return this.players.find(({ id }) => id === playerId);
   }
 }
