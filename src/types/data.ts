@@ -68,3 +68,7 @@ export enum AttackStatus {
 }
 
 export type RandomAttack = Pick<Attack, 'gameId' | 'indexPlayer'>;
+
+export type Finish = {
+  winPlayer: number;
+};

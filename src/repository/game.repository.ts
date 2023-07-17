@@ -25,4 +25,8 @@ export class GameRepository {
     this.games[gameIdx] = game.clone();
     return true;
   }
+
+  findByPlayerId(playerId: number): Game[] {
+    return this.games.filter((game) => game.getPlayerIds().includes(playerId));
+  }
 }

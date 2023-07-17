@@ -11,6 +11,7 @@ import { AddShips, AddToRoom, Attack, RandomAttack } from './types/data';
 import { GameRepository } from './repository/game.repository';
 import { EventEmitterFactory } from './events/event-emitter-factory';
 import { GameController } from './controller/game.controller';
+import { Events } from './events/events';
 
 const HTTP_PORT = 8181;
 
@@ -36,6 +37,15 @@ const gameController = new GameController(emitter, userService, gameRepository);
 
 wss.on('connection', (ws) => {
   ws.on('error', console.error);
+  ws.on('close', () => {
+    try {
+      const { id: playerId } = userService.getCurrentUser(ws);
+      const games = gameRepository.findByPlayerId(playerId);
+      games.forEach((game) =>
+        emitter.emit(Events.Disconnected, game, playerId),
+      );
+    } catch (e) {}
+  });
 
   ws.on('message', (data) => {
     try {

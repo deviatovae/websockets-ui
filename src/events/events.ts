@@ -5,4 +5,5 @@ export enum Events {
   ShipPlaced = 'shipPlaced',
   GameStarted = 'gameStarted',
   Attacked = 'attacked',
+  Disconnected = 'disconnected',
 }

@@ -32,8 +32,9 @@ export class Game {
       throw new Error('This position has been already attacked before');
     }
 
-    const ship = this.ships[targetPlayerId].find(
-      ({ position: { x: posX, y: posY } }) => posX === x && posY === y,
+    const cellIndex = this.convertCoordinatesToIndex(x, y);
+    const ship = this.ships[targetPlayerId].find((ship) =>
+      this.getShipCells(ship).includes(cellIndex),
     );
     const hit = !!ship;
     this.battlefields[targetPlayerId][targetCell] = hit;
@@ -69,8 +70,9 @@ export class Game {
 
   getCellsAroundShip(ship: Ship) {
     const result: [number, number][] = [];
+    const cells = this.getShipCells(ship);
 
-    this.getShipCells(ship).forEach((cell) => {
+    cells.forEach((cell) => {
       const [row, col] = this.convertIndexToCoordinates(cell);
 
       for (let i = row - 1; i <= row + 1; i++) {
@@ -80,7 +82,7 @@ export class Game {
             j < 0 ||
             i >= this.battleshipSize ||
             j >= this.battleshipSize ||
-            (row === i && col === j)
+            cells.includes(this.convertCoordinatesToIndex(i, j))
           ) {
             continue;
           }
@@ -208,5 +210,12 @@ export class Game {
       currentPlayer: currentPlayerId,
       status,
     };
+  }
+
+  getWinnerId(): number | null {
+    const alivePlayerIds = this.getPlayerIds().filter((playerId) => {
+      return this.ships[playerId].some((ship) => ship.length > 0);
+    });
+    return alivePlayerIds.length === 1 ? alivePlayerIds[0] : null;
   }
 }

@@ -8,6 +8,7 @@ import { WsUserService } from '../service/ws-user.service';
 import { StartGameListener } from './listeners/start-game.listener';
 import { SendTurnListener } from './listeners/send-turn.listener';
 import { AttackListener } from './listeners/attack.listener';
+import { FinishGameListener } from './listeners/finish-game.listener';
 
 export class EventEmitterFactory {
   static createEventEmitter(
@@ -60,6 +61,17 @@ export class EventEmitterFactory {
       Events.Attacked,
       attackListener.sendAttackResult.bind(attackListener),
     );
+
+    const finishGameListener = new FinishGameListener(userService);
+    emitter.on(
+      Events.Disconnected,
+      finishGameListener.finishOnDisconnect.bind(finishGameListener),
+    );
+    emitter.on(
+      Events.Attacked,
+      finishGameListener.finishOnAttack.bind(finishGameListener),
+    );
+
     emitter.on(
       Events.Attacked,
       sendTurnListener.sendTurn.bind(sendTurnListener),

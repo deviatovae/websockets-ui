@@ -1,6 +1,10 @@
 import { PlayerRepository } from '../repository/player.repository';
 import { Player } from '../entity/player';
 import { WebSocket } from 'ws';
+import { Game } from '../entity/game';
+import { createResultMessage } from '../types/message';
+import { StartGameResult } from '../types/data';
+import { MessageType } from '../types';
 
 export class WsUserService {
   private users: Map<WebSocket, Player> = new Map<WebSocket, Player>();
@@ -41,6 +45,18 @@ export class WsUserService {
     }
 
     return entry[0];
+  }
+
+  sendMessageForPlayer<T>(game: Game, type: MessageType, data: T) {
+    game.getPlayerIds().forEach((playerId) => {
+      const ws = this.getPlayerSocket(playerId);
+      const result = createResultMessage<T>({
+        id: 0,
+        type,
+        data,
+      });
+      ws.send(JSON.stringify(result));
+    });
   }
 
   getPlayerSockets(): WebSocket[] {

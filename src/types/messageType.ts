@@ -9,4 +9,5 @@ export enum MessageType {
   TakeTurn = 'turn',
   Attack = 'attack',
   RandomAttack = 'randomAttack',
+  Finish = 'finish',
 }
